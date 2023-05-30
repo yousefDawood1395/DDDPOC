@@ -1,0 +1,8 @@
+sonar.host.url=http://localhost:9000
+sonar.login=sqa_609bbc975f1aa5d98cf512622974ccd8fe547e6d
+sonar.projectKey=DDDPOC
+sonar.projectName=DDDPoc
+sonar.projectVersion=6.0
+sonar.sources=.
+sonar.exclusions=**/*.Tests.cs, **/*.Test.cs, **/*.Designer.cs
+sonar.cs.vstest.reportsPaths=**14. Save the Jenkins job configuration.
