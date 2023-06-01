@@ -23,15 +23,18 @@ namespace DDDPOC.Application
         private readonly IRepository<Customer, Guid> _customerRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEventBus _eventBus;
+        private readonly ICacheService _cacheService;
 
 
         public AddCustomerHandler(IRepository<Customer, Guid> customerRepo,
                                 IUnitOfWork unitOfWork,
-                                IEventBus eventBus)
+                                IEventBus eventBus,
+                                ICacheService cacheService)
         {
             _customerRepo = customerRepo;
             _unitOfWork = unitOfWork;
             _eventBus = eventBus;
+            _cacheService = cacheService;
         }
         public async Task<bool> Handle(AddCustomerCommand request, CancellationToken cancellationToken)
         {
@@ -39,6 +42,7 @@ namespace DDDPOC.Application
             {
                 var customer = Customer.Create(request.CustomerName, request.Address, request.Email);
                 _customerRepo.Add(customer);
+                _cacheService.RemoveData("customer");
                 _unitOfWork.SaveChanges();
                 await _customerRepo.RaisEvents(customer);
                 await _eventBus.PublishAsync(new CreateCustomerEvent()

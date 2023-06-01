@@ -39,6 +39,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+//builder.Services.AddScoped(typeof(ICacheService), typeof(CacheService));
+builder.Services.AddScoped(typeof(ICacheService), typeof(DistributedCacheService));
+var res = builder.Configuration.GetConnectionString("RedisURL");
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    string redisConnection = builder.Configuration.GetConnectionString("RedisURL")!;
+    options.Configuration = redisConnection;
+}); 
 builder.Services.AddTransient<IEventBus, EventBus>();
 var app = builder.Build();
 
