@@ -3,12 +3,13 @@ using DDDPOC.Domain.Aggregates;
 using DDDPOC.Infrastructure.EventBus;
 using DDDPOC.Infrastructure.Repositories;
 using MediatR;
+using Nest;
 using System.ComponentModel.DataAnnotations;
 
 
 namespace DDDPOC.Application
 {
-    public class AddCustomerCommand : IRequest<bool>
+    public class AddCustomerCommand : MediatR.IRequest<bool>
     {
         [Required]
         public string CustomerName { get; set; }
@@ -24,17 +25,20 @@ namespace DDDPOC.Application
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEventBus _eventBus;
         private readonly ICacheService _cacheService;
+        private readonly IElasticClient _elasticClient;
 
 
         public AddCustomerHandler(IRepository<Customer, Guid> customerRepo,
                                 IUnitOfWork unitOfWork,
                                 IEventBus eventBus,
-                                ICacheService cacheService)
+                                ICacheService cacheService,
+                                IElasticClient elasticClient)
         {
             _customerRepo = customerRepo;
             _unitOfWork = unitOfWork;
             _eventBus = eventBus;
             _cacheService = cacheService;
+            _elasticClient = elasticClient;
         }
         public async Task<bool> Handle(AddCustomerCommand request, CancellationToken cancellationToken)
         {
@@ -44,14 +48,16 @@ namespace DDDPOC.Application
                 _customerRepo.Add(customer);
                 _cacheService.RemoveData("customer");
                 _unitOfWork.SaveChanges();
+               CustomerDto mappedCustomer = CustomerDto.FromCustomer(customer);
+                await _elasticClient.IndexDocumentAsync(mappedCustomer);
                 await _customerRepo.RaisEvents(customer);
-                await _eventBus.PublishAsync(new CreateCustomerEvent()
-                {
-                    Id = customer.Id,
-                    CustomerName = customer.CustomerName,
-                    Address = customer.Address,
-                    Email = customer.Email,
-                },cancellationToken);
+                //await _eventBus.PublishAsync(new CreateCustomerEvent()
+                //{
+                //    Id = customer.Id,
+                //    CustomerName = customer.CustomerName,
+                //    Address = customer.Address,
+                //    Email = customer.Email,
+                //},cancellationToken);
                 return true;
             }
             catch (Exception ex)

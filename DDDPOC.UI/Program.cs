@@ -1,4 +1,5 @@
 using DDDPOC.Application.Commands.Customer;
+using DDDPOC.Application.Extensions;
 using DDDPOC.Infrastructure.EventBus;
 using DDDPOC.Infrastructure.Infrastructure.Data;
 using DDDPOC.Infrastructure.MessageBroker;
@@ -42,12 +43,13 @@ builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
 //builder.Services.AddScoped(typeof(ICacheService), typeof(CacheService));
 builder.Services.AddScoped(typeof(ICacheService), typeof(DistributedCacheService));
 var res = builder.Configuration.GetConnectionString("RedisURL");
+builder.Services.AddTransient<IEventBus, EventBus>();
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     string redisConnection = builder.Configuration.GetConnectionString("RedisURL")!;
     options.Configuration = redisConnection;
-}); 
-builder.Services.AddTransient<IEventBus, EventBus>();
+});
+builder.Services.AddElasticsearch(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

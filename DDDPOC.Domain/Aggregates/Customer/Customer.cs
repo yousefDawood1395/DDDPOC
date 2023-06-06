@@ -17,8 +17,8 @@ namespace DDDPOC.Domain.Aggregates
         private Customer(string customerName, string address, string email) : base()
         {
             CustomerName = Guard.Against.NullOrEmpty(customerName, nameof(customerName));
-            Address = Guard.Against.NullOrEmpty(customerName, nameof(address));
-            Email = Guard.Against.NullOrEmpty(customerName, nameof(email));
+            Address = Guard.Against.NullOrEmpty(address, nameof(address));
+            Email = Guard.Against.NullOrEmpty(email, nameof(email));
             orders = new List<Order>();
         }
         public IReadOnlyList<Order> Orders => orders;
