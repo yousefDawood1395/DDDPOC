@@ -4,6 +4,8 @@ using DDDPOC.Infrastructure.EventBus;
 using DDDPOC.Infrastructure.Infrastructure.Data;
 using DDDPOC.Infrastructure.MessageBroker;
 using DDDPOC.Infrastructure.Repositories;
+using Elastic.Apm.Api;
+using Elastic.Apm.NetCoreAll;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -11,6 +13,9 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true) // Add a JSON configuration file
+    .AddEnvironmentVariables(); // Add environment variables
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -52,6 +57,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddElasticsearch(builder.Configuration);
 var app = builder.Build();
 
+app.UseAllElasticApm(builder.Configuration);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

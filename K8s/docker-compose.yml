@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   elasticsearch:
@@ -30,6 +30,18 @@ services:
       - elastic
     depends_on:
       - elasticsearch
+  
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:7.14.0
+    container_name: apmserver
+    ports:
+      - "8200:8200"
+    volumes:
+      - apmserver_data:/usr/share/apm-server/data
+    networks:
+      - elastic
+    depends_on:
+      - elasticsearch
 
 networks:
   elastic:
@@ -37,4 +49,12 @@ networks:
 
 volumes:
   elasticsearch_data:
-    driver: local
+   driver: local
+  apmserver_data:
+   driver: local
+   
+
+
+
+
+      
