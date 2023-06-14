@@ -1,0 +1,33 @@
+{
+  "GlobalConfiguration": {
+    //"RequestIdKey": "X-Correlation-Id",
+    "BaseUrl": "http://localhost:7176"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/gateway/customer",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/Customer/GetAll",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7174
+        }
+      ],
+      "SwaggerKey": "customers"
+    }
+  ],
+  "SwaggerEndPoints": [
+    {
+      "Key": "customers",
+      "Config": [
+        {
+          "Name": "customers API",
+          "Version": "v1",
+          "Url": "http://localhost:7174/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}
