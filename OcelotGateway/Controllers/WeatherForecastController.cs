@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using OcelotGateway.Configuration;
 
 namespace OcelotGateway.Controllers
 {
@@ -6,6 +7,7 @@ namespace OcelotGateway.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
+        private ICorrelationIdGenerator _correlationIdGenerator;
         private static readonly string[] Summaries = new[]
         {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -13,14 +15,16 @@ namespace OcelotGateway.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, ICorrelationIdGenerator correlationIdGenerator)
         {
             _logger = logger;
+            _correlationIdGenerator = correlationIdGenerator;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
+            _logger.LogInformation("CorrelationId:{correlationId}", _correlationIdGenerator.Get());
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),

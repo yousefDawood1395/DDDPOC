@@ -1,13 +1,13 @@
 {
   "GlobalConfiguration": {
-    //"RequestIdKey": "X-Correlation-Id",
+    "RequestIdKey": "X-Correlation-Id",
     "BaseUrl": "http://localhost:7176"
   },
   "Routes": [
     {
       "UpstreamPathTemplate": "/gateway/customer",
       "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/Customer/GetAll",
+      "DownstreamPathTemplate": "/api/Customer/GetAl",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -16,7 +16,20 @@
         }
       ],
       "SwaggerKey": "customers"
-    }
+    },
+    //{
+    //  "UpstreamPathTemplate": "/WeatherForecast",
+    //  "UpstreamHttpMethod": [ "Get" ],
+    //  "DownstreamPathTemplate": "/api/Customer/GetAll",
+    //  "DownstreamScheme": "http",
+    //  "DownstreamHostAndPorts": [
+    //    {
+    //      "Host": "localhost",
+    //      "Port": 7174
+    //    }
+    //  ],
+    //  "SwaggerKey": "customers"
+    //}
   ],
   "SwaggerEndPoints": [
     {
